@@ -263,7 +263,7 @@ lakes <- ne_download(scale = 110, type = 'lakes', category = 'physical')
 
 ```
 ## OGR data source with driver: ESRI Shapefile 
-## Source: "/tmp/RtmpKXP6cr", layer: "ne_110m_lakes"
+## Source: "/tmp/RtmpPjQBD2", layer: "ne_110m_lakes"
 ## with 25 features
 ## It has 33 fields
 ## Integer64 fields read as strings:  scalerank ne_id
@@ -298,14 +298,19 @@ ROC curve looks pretty good!
 Make a plot for the grant
 
 ```r
-plot(cham.predict.lakes, xlim = c(-100,-40), ylim = c(20,50), bty="n")
+pdf(file="~/Documents/chamaecrista_sdm/cham_model.pdf")
+plot(cham.predict.lakes, xlim = c(-100,-70), ylim = c(20,50), bty="n")
 points(-79.5316, 44.0296, lwd=2, cex=0.75) #KSR
 points(-81.3521, 27.1828, lwd=2, cex=0.75) #Archbold
 points(-78.6821, 35.7847, lwd=2, cex=0.75) #NCSU
 points(-76.8851,  40.9548, lwd=2, cex=0.75) #PA
+dev.off()
 ```
 
-![](cham_sdm_v4_files/figure-html/grantplot-1.png)<!-- -->
+```
+## png 
+##   2
+```
 
 
 # Variance across latitude -- Variance within a year (averages from 1970-2000)
@@ -361,6 +366,8 @@ abline(lm(tmax_var_val$variance ~ tmax_var_val$latitude), col = "red", lwd=2)
 ![](cham_sdm_v4_files/figure-html/tmax_variation-1.png)<!-- -->
 
 
+
+
 ```r
 #order latitude variable so it plots normally
 ord_prec <- prec_var_val[order(prec_var_val$latitude), ]
@@ -378,3 +385,22 @@ lines(ord_prec$latitude, prec.pred, col = "red", lwd=2)
 
 ![](cham_sdm_v4_files/figure-html/prec_variation-1.png)<!-- -->
 
+
+Make pdf plots for grant
+
+```r
+pdf(file="~/Documents/chamaecrista_sdm/variability.pdf")
+par(mfrow=c(1,3))
+plot(tmin_var_val$latitude, tmin_var_val$variance, xlab = "Latitude", ylab = "Variance", main = "Minimum Temperature")
+abline(lm(tmin_var_val$variance ~ tmin_var_val$latitude), col = "red", lwd=2)
+plot(tmax_var_val$latitude, tmax_var_val$variance, xlab = "Latitude", ylab = "Variance", main = "Maximum Temperature")
+abline(lm(tmax_var_val$variance ~ tmax_var_val$latitude), col = "red", lwd=2)
+plot(ord_prec$latitude, ord_prec$variance, xlab = "Latitude", ylab = "Variance", main = "Precipitation")
+lines(ord_prec$latitude, prec.pred, col = "red", lwd=2)
+dev.off()
+```
+
+```
+## png 
+##   2
+```
