@@ -13,7 +13,7 @@ output:
 
 
 ```r
-load("~/Desktop/cham_sdm_plotdata3.Rdata")
+load("~/Documents/chamaecrista_sdm/cham_sdm_plotdata3.Rdata")
 
 #just so the markdown will knit with ROC image
 library(raster)
@@ -256,13 +256,14 @@ Model Evaluation:
 library(rnaturalearth)
 library(sp)
 
+
 #download the spdf of lakes around the world
 lakes <- ne_download(scale = 110, type = 'lakes', category = 'physical')
 ```
 
 ```
 ## OGR data source with driver: ESRI Shapefile 
-## Source: "/private/var/folders/dq/bgqv1nq50zs3bnyy8h6957700000gn/T/RtmpDyq9Br", layer: "ne_110m_lakes"
+## Source: "/tmp/RtmpKXP6cr", layer: "ne_110m_lakes"
 ## with 25 features
 ## It has 33 fields
 ## Integer64 fields read as strings:  scalerank ne_id
@@ -293,6 +294,18 @@ plot(cham.eval, 'ROC')
 
 ![](cham_sdm_v4_files/figure-html/roc_curve-1.png)<!-- -->
 ROC curve looks pretty good!
+
+Make a plot for the grant
+
+```r
+plot(cham.predict.lakes, xlim = c(-100,-40), ylim = c(20,50), bty="n")
+points(-79.5316, 44.0296, lwd=2, cex=0.75) #KSR
+points(-81.3521, 27.1828, lwd=2, cex=0.75) #Archbold
+points(-78.6821, 35.7847, lwd=2, cex=0.75) #NCSU
+points(-76.8851,  40.9548, lwd=2, cex=0.75) #PA
+```
+
+![](cham_sdm_v4_files/figure-html/grantplot-1.png)<!-- -->
 
 
 # Variance across latitude -- Variance within a year (averages from 1970-2000)

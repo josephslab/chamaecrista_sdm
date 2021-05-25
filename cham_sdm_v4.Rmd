@@ -11,7 +11,7 @@ output:
 ```
 
 ```{r}
-load("~/Desktop/cham_sdm_plotdata3.Rdata")
+load("~/Documents/chamaecrista_sdm/cham_sdm_plotdata3.Rdata")
 
 #just so the markdown will knit with ROC image
 library(raster)
@@ -224,6 +224,7 @@ Model Evaluation:
 library(rnaturalearth)
 library(sp)
 
+
 #download the spdf of lakes around the world
 lakes <- ne_download(scale = 110, type = 'lakes', category = 'physical')
 
@@ -246,6 +247,16 @@ plot(cham.predict.lakes)
 plot(cham.eval, 'ROC')
 ```
 ROC curve looks pretty good!
+
+Make a plot for the grant
+```{r grantplot}
+plot(cham.predict.lakes, xlim = c(-100,-40), ylim = c(20,50), bty="n")
+points(-79.5316, 44.0296, lwd=2, cex=0.75) #KSR
+points(-81.3521, 27.1828, lwd=2, cex=0.75) #Archbold
+points(-78.6821, 35.7847, lwd=2, cex=0.75) #NCSU
+points(-76.8851,  40.9548, lwd=2, cex=0.75) #PA
+
+```
 
 
 # Variance across latitude -- Variance within a year (averages from 1970-2000)
