@@ -263,7 +263,7 @@ lakes <- ne_download(scale = 110, type = 'lakes', category = 'physical')
 
 ```
 ## OGR data source with driver: ESRI Shapefile 
-## Source: "/tmp/RtmpPjQBD2", layer: "ne_110m_lakes"
+## Source: "/tmp/RtmpiaPpsd", layer: "ne_110m_lakes"
 ## with 25 features
 ## It has 33 fields
 ## Integer64 fields read as strings:  scalerank ne_id
@@ -320,10 +320,12 @@ dev.off()
 tmin <- getData("worldclim", var="tmin", res="2.5")
 tmax <- getData("worldclim", var="tmax", res="2.5")
 prec <- getData("worldclim", var="prec", res="2.5")
+save(tmin, tmax, prec, file="worldclim.rda")
 ```
 
 
 ```r
+load('worldclim.rda')
 ds_obs_tmin <- extract(tmin, y=ds_obs)
 ds_obs_tmax <- extract(tmax, y=ds_obs)
 ds_obs_prec <- extract(prec, y=ds_obs)
@@ -389,14 +391,39 @@ lines(ord_prec$latitude, prec.pred, col = "red", lwd=2)
 Make pdf plots for grant
 
 ```r
-pdf(file="~/Documents/chamaecrista_sdm/variability.pdf")
+##make table of all sites
+ksr = c(-79.5316, 44.0296)
+archbold = c(-81.3521, 27.1828)
+ncsu = c(-78.6821, 35.7847)
+PA = c(-76.8851,  40.9548)
+allsites = data.frame(rbind(ksr, archbold, ncsu, PA))
+
+##pull out bioclim data for the common garden locations
+load('worldclim.rda')
+site_tmin <- extract(tmin, y = allsites)
+site_tmax <- extract(tmax, y = allsites)
+site_prec <- extract(prec, y = allsites)
+
+#calculate variances
+allsites$tmin_var = apply(site_tmin, 1, var)
+allsites$tmax_var = apply(site_tmax, 1, var)
+allsites$prec_var = apply(site_prec, 1, var)
+
+
+pdf(file="~/Documents/chamaecrista_sdm/variability.pdf", width = 12, height=6)
 par(mfrow=c(1,3))
-plot(tmin_var_val$latitude, tmin_var_val$variance, xlab = "Latitude", ylab = "Variance", main = "Minimum Temperature")
+plot(tmin_var_val$latitude, tmin_var_val$variance, xlab = "Latitude", ylab = "Variance", main = "Minimum Temperature", col="grey")
 abline(lm(tmin_var_val$variance ~ tmin_var_val$latitude), col = "red", lwd=2)
-plot(tmax_var_val$latitude, tmax_var_val$variance, xlab = "Latitude", ylab = "Variance", main = "Maximum Temperature")
+points(allsites$X2, allsites$tmin_var, cex=2, pch=16)
+
+plot(tmax_var_val$latitude, tmax_var_val$variance, xlab = "Latitude", ylab = "Variance", main = "Maximum Temperature", col="grey")
 abline(lm(tmax_var_val$variance ~ tmax_var_val$latitude), col = "red", lwd=2)
-plot(ord_prec$latitude, ord_prec$variance, xlab = "Latitude", ylab = "Variance", main = "Precipitation")
+points(allsites$X2, allsites$tmax_var, cex=2, pch=16)
+
+plot(ord_prec$latitude, ord_prec$variance, xlab = "Latitude", ylab = "Variance", main = "Precipitation", col="grey")
 lines(ord_prec$latitude, prec.pred, col = "red", lwd=2)
+points(allsites$X2, allsites$prec_var, cex=2, pch=16)
+
 dev.off()
 ```
 
